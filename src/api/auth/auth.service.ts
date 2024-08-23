@@ -48,7 +48,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       fullName: user.name,
-      roles: user?.roles,
+      role: user?.role,
     };
 
     return {
@@ -62,17 +62,14 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const { email, password } = loginDto;
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: ['roles'],
-    });
+    const user = await this.userService.getByEmail(email);
 
     const isRightPassword = bcrypt.compareSync(password, user?.password);
     if (!user || !isRightPassword) {
       throw new BadRequestException(ERROR_AUTH.PASSWORD_INCORRECT.MESSAGE);
     }
+
+    user.lastLogin = new Date();
 
     await user.save();
 
@@ -87,7 +84,7 @@ export class AuthService {
       where: {
         id,
       },
-      relations: ['roles'],
+      relations: ['role.permissions'],
     });
     return this.generateTokenResponse(user);
   }

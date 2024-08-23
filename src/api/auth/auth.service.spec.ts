@@ -10,17 +10,15 @@ import { MOCK_USER_WITH_ROLE } from '../user/user.constant';
 describe('AuthService', () => {
   let authService: AuthService;
   const mockedRepo = {
-    findOne: jest.fn((id) =>
-      Promise.resolve({
-        ...MOCK_USER_WITH_ROLE,
-        password:
-          '$2b$12$VaegMcM07WIGh5ePNKydPuURhhzr6F5rFfuBz2BtkO.Ut.1PNDRbK',
-        save: () => true,
-      }),
-    ),
     save: jest.fn((id) => Promise.resolve(true)),
   };
   const mockUserService = {
+    getByEmail: jest.fn((t: string) => Promise.resolve({
+      ...MOCK_USER_WITH_ROLE,
+      password:
+        '$2b$12$VaegMcM07WIGh5ePNKydPuURhhzr6F5rFfuBz2BtkO.Ut.1PNDRbK',
+      save: () => true,
+    })),
     setCurrentRefreshToken: jest.fn((t: string) => Promise.resolve(true)),
     removeRefreshToken: jest.fn((id: string) => Promise.resolve(true)),
   };
@@ -86,7 +84,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('should return success', async () => {
+    it.only('should return success', async () => {
       const result = await authService.login({
         email: 'huynhdn@gmail.com',
         password: 'abcd1234',

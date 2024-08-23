@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "659c1b1c-57b1-4f46-906f-c8734ed1ec1f",
+		"_postman_id": "e2bb342e-9d21-4342-b8c5-a5cfa3744c66",
 		"name": "User Management",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "34575149"
@@ -117,52 +117,6 @@
 			]
 		},
 		{
-			"name": "Organization",
-			"item": [
-				{
-					"name": "organizations",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{endpoint}}/api/v1/organizations",
-							"host": [
-								"{{endpoint}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"organizations"
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "1",
-									"disabled": true
-								},
-								{
-									"key": "",
-									"value": "",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "User",
 			"item": [
 				{
@@ -225,6 +179,45 @@
 					"response": []
 				},
 				{
+					"name": "info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"huynhdn\",\n    \"status\": 1,\n    \"phone\": \"0374539633\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/v1/users/info",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "change password",
 					"request": {
 						"auth": {
@@ -262,14 +255,9 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Roles",
-			"item": [
+				},
 				{
-					"name": "roles",
+					"name": "update user",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -281,29 +269,27 @@
 								}
 							]
 						},
-						"method": "GET",
+						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"huynhdn\",\n    \"phone\": \"0374539633\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{endpoint}}/api/v1/roles",
+							"raw": "{{endpoint}}/api/v1/users/1",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"roles"
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "1",
-									"disabled": true
-								},
-								{
-									"key": "",
-									"value": "",
-									"disabled": true
-								}
+								"users",
+								"1"
 							]
 						}
 					},
@@ -338,6 +324,47 @@
 								"api",
 								"v1",
 								"permissions"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Academy",
+			"item": [
+				{
+					"name": "academy list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{endpoint}}/api/v1/academy",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"academy"
 							],
 							"query": [
 								{
