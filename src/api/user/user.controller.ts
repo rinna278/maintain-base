@@ -12,7 +12,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { API_CONFIG } from '../../configs/constant.config';
 import { IAdminPayload } from '../../share/common/app.interface';
 import { GetUser } from '../../share/decorator/get-user.decorator';
@@ -26,6 +32,7 @@ import { ChangeUserPasswordDto, UpdateUserDto } from './dto/update-user.dto';
 import { USER_SWAGGER_RESPONSE } from './user.constant';
 import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
+import { AUTH_SWAGGER_RESPONSE } from '../auth/auth.constant';
 
 @Controller({
   version: [API_CONFIG.VERSION_V1],
@@ -35,6 +42,8 @@ import { UserService } from './user.service';
 @ApiTags('User')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
+@ApiBadRequestResponse(AUTH_SWAGGER_RESPONSE.BAD_REQUEST_EXCEPTION)
+@ApiInternalServerErrorResponse(AUTH_SWAGGER_RESPONSE.INTERNAL_SERVER_EXCEPTION)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -49,7 +58,10 @@ export class UserController {
   @Put('info')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(PermissionGuard)
-  public async updateProfile(@GetUser('sub') id: string, @Body() updateDto: UpdateUserDto): Promise<boolean> {
+  public async updateProfile(
+    @GetUser('sub') id: string,
+    @Body() updateDto: UpdateUserDto,
+  ): Promise<boolean> {
     await this.userService.update(id, updateDto);
     return true;
   }

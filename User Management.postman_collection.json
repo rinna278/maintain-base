@@ -57,6 +57,54 @@
 					"response": []
 				},
 				{
+					"name": "register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"accessToken\", pm.response.json().accessToken);",
+									"pm.environment.set(\"refreshToken\", pm.response.json().refreshToken);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"huynhdn@gmail.com\",\n    \"password\": \"abcd1234\",\n    \"name\": \"huynhdn\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/v1/register",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "refresh token",
 					"event": [
 						{
@@ -339,10 +387,82 @@
 			]
 		},
 		{
-			"name": "Academy",
+			"name": "Uploads",
 			"item": [
 				{
-					"name": "academy list",
+					"name": "minio normal upload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1ef6238c-5103-48c0-8a82-7991e9dcc416"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{endpoint}}/api/v1/storage/minio/upload",
+							"host": [
+								"{{endpoint}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"minio",
+								"upload"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "minio-presigned-url",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"upload_url\", pm.response.json().url);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -357,14 +477,62 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{endpoint}}/api/v1/academy",
+							"raw": "{{endpoint}}/api/v1/storage/minio/presigned-url",
 							"host": [
 								"{{endpoint}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"academy"
+								"storage",
+								"minio",
+								"presigned-url"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1ef6238c-5103-48c0-8a82-7991e9dcc416"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{upload_url}}",
+							"host": [
+								"{{upload_url}}"
 							],
 							"query": [
 								{

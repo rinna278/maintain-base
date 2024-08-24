@@ -16,11 +16,7 @@ import { databaseProviders } from './database.providers';
         username: DATABASE_CONFIG.username,
         password: DATABASE_CONFIG.password,
         database: DATABASE_CONFIG.database,
-        entities: [
-          PermissionEntity,
-          RoleEntity,
-          UserEntity,
-        ],
+        entities: [PermissionEntity, RoleEntity, UserEntity],
         migrations: [__dirname + '/../../migrations/*.ts'],
         autoLoadEntities: true,
         synchronize: false,
