@@ -13,7 +13,9 @@ export class CreateRoles1661161731016 implements MigrationInterface {
       CREATE TYPE "role_type_enum" AS ENUM (
         '1',
         '2',
-        '3');
+        '3',
+        '4',
+        '5');
     `);
     await queryRunner.query(`
       CREATE TABLE "role" (
@@ -21,7 +23,6 @@ export class CreateRoles1661161731016 implements MigrationInterface {
         "name" varchar(255) NOT NULL,
         "type" "role_type_enum" NOT NULL,
         created_by int8 NULL,
-        is_super_admin bool NOT NULL DEFAULT false,
         status "role_status_enum" NOT NULL DEFAULT '1'::role_status_enum,
         CONSTRAINT "PK_b36bcfe02fc8de3c57a8b2391c2" PRIMARY KEY (id),
         CONSTRAINT "UQ_ae4578dcaed5adff96595e61660" UNIQUE (name)

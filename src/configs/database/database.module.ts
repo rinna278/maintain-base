@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OrganizationEntity } from '../../api/organization/organization.entity';
 import { PermissionEntity } from '../../api/permission/permission.entity';
 import { RoleEntity } from '../../api/role/role.entity';
 import { UserEntity } from '../../api/user/user.entity';
@@ -21,7 +20,6 @@ import { databaseProviders } from './database.providers';
           PermissionEntity,
           RoleEntity,
           UserEntity,
-          OrganizationEntity,
         ],
         migrations: [__dirname + '/../../migrations/*.ts'],
         autoLoadEntities: true,

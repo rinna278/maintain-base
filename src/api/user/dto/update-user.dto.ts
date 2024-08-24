@@ -20,6 +20,15 @@ export class UpdateUserDto {
   name: string;
 
   @ApiPropertyOptional({
+    description: 'phone number',
+  })
+  @IsOptional()
+  @IsString()
+  @Transform(({ value }) => value.trim())
+  @MaxLength(100)
+  phone: string;
+
+  @ApiPropertyOptional({
     description: 'status',
   })
   @IsOptional()

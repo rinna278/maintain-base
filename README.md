@@ -1,4 +1,4 @@
-# Nestjs Boilerplate - SASS (Software as a service) with Postgres SQL
+# Nestjs Boilerplate - with Postgres SQL
 
 ## Description
 

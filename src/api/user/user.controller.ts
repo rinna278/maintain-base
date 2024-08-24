@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Put,
   HttpCode,
   HttpStatus,
   Param,
@@ -37,11 +38,20 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @ApiOkResponse(USER_SWAGGER_RESPONSE.GET_LIST_SUCCESS)
+  @ApiOkResponse(USER_SWAGGER_RESPONSE.GET_SUCCESS)
   @Get('info')
   @HttpCode(HttpStatus.OK)
   public getByEmail(@GetUser('email') email: string): Promise<UserEntity> {
     return this.userService.getByEmail(email);
+  }
+
+  @ApiOkResponse(USER_SWAGGER_RESPONSE.UPDATE_SUCCESS)
+  @Put('info')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(PermissionGuard)
+  public async updateProfile(@GetUser('sub') id: string, @Body() updateDto: UpdateUserDto): Promise<boolean> {
+    await this.userService.update(id, updateDto);
+    return true;
   }
 
   @ApiOkResponse(USER_SWAGGER_RESPONSE.UPDATE_SUCCESS)
