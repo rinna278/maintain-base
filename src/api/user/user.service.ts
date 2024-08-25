@@ -39,7 +39,7 @@ export class UserService extends BaseService<UserEntity> {
       uModel.name = DEFAULT_ADMIN_USER.name;
       uModel.role = await this.roleRepository.findOneBy({
         type: RoleTypes.Admin,
-        name: RoleName.Administrator
+        name: RoleName.Administrator,
       });
       await this.userRepository.save(uModel);
     }

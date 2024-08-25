@@ -16,9 +16,9 @@ export class CreateUser1661224228702 implements MigrationInterface {
         created_at timestamp NOT NULL DEFAULT now(),
         updated_at timestamp NOT NULL DEFAULT now(),
         deleted_at timestamp NULL,
-        "name" varchar(255) NOT NULL,
+        name varchar(255) NOT NULL,
         email varchar(255) NOT NULL,
-        "password" varchar(200) NOT NULL,
+        password varchar(200) NOT NULL,
         status "user_status_enum" NOT NULL DEFAULT '1'::user_status_enum,
         created_by int8 NULL,
         phone varchar(14) NULL,
@@ -27,11 +27,14 @@ export class CreateUser1661224228702 implements MigrationInterface {
         last_login timestamp NULL,
         current_hashed_refresh_token varchar NULL,
         role_id serial4 NOT NULL,
+        avatar varchar(255) NULL,
         CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY (id),
         CONSTRAINT "UQ_065d4d8f3b5adb4a08841eae3c8" UNIQUE (name),
         CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE (email)
       );
     `);
+
+    await queryRunner.query(`ALTER TABLE "user" ADD CONSTRAINT "user_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "public"."role" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;`)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

@@ -30,6 +30,12 @@ docker compose -f docker-compose-dev.yml up --build
 docker compose -f docker-compose-db.yml up --build
 ```
 
+## Setup minio storage in the local
+
+```bash
+docker compose -f docker-compose-storage.yml up --build
+```
+
 ## Running the app
 
 ```bash

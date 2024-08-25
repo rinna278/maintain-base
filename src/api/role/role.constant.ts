@@ -21,7 +21,7 @@ export enum RoleStatus {
 export enum RoleName {
   Administrator = 'Administrator',
   UserManager = 'User Manager',
-  User = 'User'
+  User = 'User',
 }
 
 export const ROLES_DEFAULT = [

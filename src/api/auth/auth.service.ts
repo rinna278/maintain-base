@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -14,12 +15,17 @@ import { ERROR_AUTH } from './auth.constant';
 import { UserEntity } from '../user/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { SignUpDto } from './dto/signup.dto';
+import { RoleEntity } from '../role/role.entity';
+import { RoleStatus, RoleTypes } from '../role/role.constant';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(RoleEntity)
+    private readonly roleRepository: Repository<RoleEntity>,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
   ) {}
@@ -58,6 +64,38 @@ export class AuthService {
       refreshTokenExpire: JWT_CONFIG.JWT_REFRESH_TOKEN_EXPIRATION_TIME,
       isFirstTimeLogin: !user.lastLogin,
     };
+  }
+
+  async checkExistsUserByEmail(email: string) {
+    const user = await this.userRepository.findOneBy({
+      email: email?.toLowerCase(),
+    });
+
+    if (!user) return true;
+
+    throw new NotFoundException(ERROR_AUTH.USER_NAME_EXISTED.MESSAGE);
+  }
+
+  async signUp(data: SignUpDto): Promise<unknown> {
+    await this.checkExistsUserByEmail(data.email);
+    const passwordHash = await bcrypt.hash(
+      data.password,
+      JWT_CONFIG.SALT_ROUNDS,
+    );
+    const role = await this.roleRepository.findOneBy({
+      type: RoleTypes.User,
+      status: RoleStatus.ACTIVE,
+    });
+
+    const uModel = new UserEntity();
+    uModel.email = data.email.toLowerCase();
+    uModel.password = passwordHash;
+    uModel.name = data.name;
+    uModel.role = role;
+    if (data.phone) {
+      uModel.phone = data.phone;
+    }
+    return this.userRepository.save(uModel);
   }
 
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {

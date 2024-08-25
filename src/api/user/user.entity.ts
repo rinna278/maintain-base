@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { UserStatus, USER_CONST } from './user.constant';
 import { BaseEntity } from '../../share/database/base.entity';
@@ -26,6 +26,9 @@ export class UserEntity extends BaseEntity {
 
   @Column({ length: 255, name: 'user_agent', nullable: true })
   userAgent: string;
+
+  @Column({ length: 255, nullable: true })
+  avatar: string;
 
   @Column({ length: 255, name: 'ip_address', nullable: true })
   ipAddress: string;
