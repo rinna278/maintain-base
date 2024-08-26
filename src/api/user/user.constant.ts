@@ -7,7 +7,8 @@ export const USER_CONST = {
 
 export enum UserStatus {
   ACTIVE = 1,
-  INACTIVE = 0,
+  INACTIVE = 2,
+  BLOCKED = 3,
 }
 
 export const ERROR_USER = {
