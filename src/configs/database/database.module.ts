@@ -20,7 +20,7 @@ import { databaseProviders } from './database.providers';
         migrations: [__dirname + '/../../migrations/*.ts'],
         autoLoadEntities: true,
         synchronize: false,
-        logging: DATABASE_CONFIG.logging,
+        logging: true || DATABASE_CONFIG.logging,
       }),
     }),
   ],

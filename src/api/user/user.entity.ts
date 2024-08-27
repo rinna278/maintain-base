@@ -27,7 +27,7 @@ export class UserEntity extends BaseEntity {
   @Column({ length: 255, name: 'user_agent', nullable: true })
   userAgent: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ length: 1000, nullable: true })
   avatar: string;
 
   @Column({ length: 255, name: 'ip_address', nullable: true })

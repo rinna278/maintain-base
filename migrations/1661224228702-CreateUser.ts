@@ -27,9 +27,8 @@ export class CreateUser1661224228702 implements MigrationInterface {
         last_login timestamp NULL,
         current_hashed_refresh_token varchar NULL,
         role_id serial4 NOT NULL,
-        avatar varchar(255) NULL,
+        avatar varchar(1000) NULL,
         CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY (id),
-        CONSTRAINT "UQ_065d4d8f3b5adb4a08841eae3c8" UNIQUE (name),
         CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE (email)
       );
     `);
