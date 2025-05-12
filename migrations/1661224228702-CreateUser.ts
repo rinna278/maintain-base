@@ -33,18 +33,20 @@ export class CreateUser1661224228702 implements MigrationInterface {
       );
     `);
 
-    await queryRunner.query(`ALTER TABLE "user" ADD CONSTRAINT "user_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "public"."role" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;`)
+    await queryRunner.query(`
+      ALTER TABLE "user" ADD CONSTRAINT "user_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "public"."role" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      DROP TABLE \"user\"
+      DROP TABLE IF EXISTS user;
     `);
     await queryRunner.query(`
-      DROP TYPE "user_gender_enum";
+      DROP TYPE IF EXISTS "user_gender_enum";
     `);
     await queryRunner.query(`
-      DROP TYPE "user_status_enum";
+      DROP TYPE IF EXISTS "user_status_enum";
     `);
   }
 }
