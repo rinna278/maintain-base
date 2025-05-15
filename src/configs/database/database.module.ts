@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PermissionEntity } from '../../api/permission/permission.entity';
-import { RoleEntity } from '../../api/role/role.entity';
-import { UserEntity } from '../../api/user/user.entity';
 import { DATABASE_CONFIG } from '../constant.config';
 import { databaseProviders } from './database.providers';
+// import { SpeciesEntity } from 'src/api/species/species.entity';
+// import { BreedEntity } from 'src/api/breed/breed.entity';
+import { PetEntity } from 'src/api/pet/pet.entity';
+import { PermissionEntity } from 'src/api/permission/permission.entity';
+import { RoleEntity } from 'src/api/role/role.entity';
+import { UserEntity } from 'src/api/user/user.entity';
 
 @Module({
   imports: [
@@ -16,7 +19,14 @@ import { databaseProviders } from './database.providers';
         username: DATABASE_CONFIG.username,
         password: DATABASE_CONFIG.password,
         database: DATABASE_CONFIG.database,
-        entities: [PermissionEntity, RoleEntity, UserEntity],
+        entities: [
+          PermissionEntity,
+          RoleEntity,
+          UserEntity,
+          PetEntity,
+          // BreedEntity,
+          // SpeciesEntity,
+        ],
         migrations: [__dirname + '/../../migrations/*.ts'],
         autoLoadEntities: true,
         synchronize: false,

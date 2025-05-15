@@ -7,6 +7,7 @@ import { PermissionModule } from './api/permission/permission.module';
 import { RoleModule } from './api/role/role.module';
 import { DatabaseModule } from './configs/database/database.module';
 import { StorageModule } from './api/storage/storage.module';
+import { PetModule } from './api/pet/pet.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { StorageModule } from './api/storage/storage.module';
     UserModule,
     AuthModule,
     StorageModule,
+    PetModule,
   ],
 })
 export class AppModule {

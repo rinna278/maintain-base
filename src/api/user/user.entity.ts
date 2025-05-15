@@ -1,8 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { UserStatus, USER_CONST } from './user.constant';
 import { BaseEntity } from '../../share/database/base.entity';
 import { RoleEntity } from '../role/role.entity';
+import { PetEntity } from '../pet/pet.entity';
+
 @Entity({ name: USER_CONST.MODEL_NAME })
 export class UserEntity extends BaseEntity {
   @Column({ length: 255, unique: true })
@@ -42,6 +44,9 @@ export class UserEntity extends BaseEntity {
   @ManyToOne(() => RoleEntity, (role) => role.users)
   @JoinColumn([{ name: 'role_id', referencedColumnName: 'id' }])
   role: RoleEntity;
+
+  @OneToMany(() => PetEntity, (pet) => pet.user)
+  pets: PetEntity[];
 
   @Column({
     name: 'current_hashed_refresh_token',

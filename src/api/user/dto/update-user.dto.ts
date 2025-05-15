@@ -41,7 +41,7 @@ export class UpdateUserDto {
     description: 'status',
   })
   @IsOptional()
-  @IsIn([1, 0])
+  @IsIn([1, 2])
   status: number;
 }
 
