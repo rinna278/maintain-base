@@ -8,7 +8,10 @@ import { RoleModule } from '../role/role.module';
 import { PetEntity } from '../pet/pet.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, RoleEntity, PetEntity]), RoleModule],
+  imports: [
+    TypeOrmModule.forFeature([UserEntity, RoleEntity, PetEntity]),
+    RoleModule,
+  ],
   providers: [UserService],
   exports: [UserService],
   controllers: [UserController],

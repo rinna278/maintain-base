@@ -23,7 +23,7 @@ export class RoleEntity extends BaseEntity {
   type: number;
 
   @Column({ type: 'bigint', name: 'created_by', nullable: true })
-  createdBy: string;
+  createdBy: number;
 
   @Column({ type: 'enum', enum: RoleStatus, default: RoleStatus.ACTIVE })
   status: number;
