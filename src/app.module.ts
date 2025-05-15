@@ -8,6 +8,8 @@ import { RoleModule } from './api/role/role.module';
 import { DatabaseModule } from './configs/database/database.module';
 import { StorageModule } from './api/storage/storage.module';
 import { PetModule } from './api/pet/pet.module';
+import { SpeciesModule } from './api/species/species.module';
+import { BreedModule } from './api/breed/breed.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { PetModule } from './api/pet/pet.module';
     AuthModule,
     StorageModule,
     PetModule,
+    SpeciesModule,
+    BreedModule,
   ],
 })
 export class AppModule {

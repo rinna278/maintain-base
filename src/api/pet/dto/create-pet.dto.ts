@@ -12,4 +12,8 @@ export class CreatePetDto {
   @IsOptional()
   @IsNumber()
   breedId?: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  userId: number;
 }

@@ -42,7 +42,7 @@ docker compose -f docker-compose-storage.yml up --build
 cp .env.example .env
 
 # Create migration database
-npm run typeorm migration:generate --name "NAME"
+npm run typeorm migration:create --name "NAME"
 
 # Run migration database
 npm run typeorm:run-migrations

@@ -15,7 +15,7 @@ export class PetEntity extends BaseEntity {
   createdBy: number;
 
   @Column({ type: 'bigint', name: 'user_id' })
-  userId: string;
+  userId: number;
 
   @ManyToOne(() => UserEntity, (user) => user.pets)
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])

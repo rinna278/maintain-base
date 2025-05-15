@@ -8,6 +8,9 @@ import { PetEntity } from 'src/api/pet/pet.entity';
 import { PermissionEntity } from 'src/api/permission/permission.entity';
 import { RoleEntity } from 'src/api/role/role.entity';
 import { UserEntity } from 'src/api/user/user.entity';
+import { AppointmentEntity } from 'src/api/appointment/appointment.entity';
+import { BreedEntity } from 'src/api/breed/breed.entity';
+import { SpeciesEntity } from 'src/api/species/species.entity';
 
 @Module({
   imports: [
@@ -24,8 +27,9 @@ import { UserEntity } from 'src/api/user/user.entity';
           RoleEntity,
           UserEntity,
           PetEntity,
-          // BreedEntity,
-          // SpeciesEntity,
+          BreedEntity,
+          SpeciesEntity,
+          AppointmentEntity,
         ],
         migrations: [__dirname + '/../../migrations/*.ts'],
         autoLoadEntities: true,

@@ -33,12 +33,13 @@ export class PetService {
 
   async findByUserId(userId: string): Promise<PetEntity[]> {
     return this.petRepository.find({
-      where: { userId },
+      where: { userId: +userId }, // Ensure userId is set
       relations: ['species', 'breed'],
     });
   }
 
   async create(createPetDto: CreatePetDto): Promise<PetEntity> {
+    createPetDto.userId = +createPetDto.userId || null; // Ensure userId is set
     const pet = this.petRepository.create(createPetDto);
     return this.petRepository.save(pet);
   }

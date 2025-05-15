@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddPetRelatedTables1747293787084 implements MigrationInterface {
+export class AddRelatedPetEntity1747297238182 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Tạo bảng species
     await queryRunner.query(`
@@ -43,6 +43,7 @@ export class AddPetRelatedTables1747293787084 implements MigrationInterface {
         "created_by" BIGINT NULL,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
         "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
+        "deleted_at" timestamp NULL,
         CONSTRAINT "FK_pet_user_id"
           FOREIGN KEY ("user_id") REFERENCES "user"("id")
           ON DELETE CASCADE
@@ -79,6 +80,7 @@ export class AddPetRelatedTables1747293787084 implements MigrationInterface {
         "created_by" BIGINT NULL,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
         "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
+        "deleted_at" timestamp NULL,
         CONSTRAINT "FK_appointment_user_id"
           FOREIGN KEY ("user_id") REFERENCES "user"("id")
           ON DELETE CASCADE
