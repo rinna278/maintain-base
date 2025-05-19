@@ -1,35 +1,82 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { SpeciesEntity } from './species.entity';
 import { CreateSpeciesDto } from './dto/create-species.dto';
 import { UpdateSpeciesDto } from './dto/update-species.dto';
+import { IAdminPayload, IPaginateParams } from 'src/share/common/app.interface';
+import { StringUtil } from 'src/share/utils/string.util';
+import { BaseService } from 'src/share/database/base.service';
 
 @Injectable()
-export class SpeciesService {
+export class SpeciesService extends BaseService<SpeciesEntity> {
   constructor(
     @InjectRepository(SpeciesEntity)
-    private readonly repo: Repository<SpeciesEntity>,
-  ) {}
-
-  create(dto: CreateSpeciesDto) {
-    const entity = this.repo.create(dto);
-    return this.repo.save(entity);
+    private readonly speciesRepository: Repository<SpeciesEntity>,
+  ) {
+    super(speciesRepository);
   }
 
-  findAll() {
-    return this.repo.find();
+  async createSpecies(
+    dto: CreateSpeciesDto,
+    user: IAdminPayload,
+  ): Promise<SpeciesEntity> {
+    const existing = await this.speciesRepository.findOneBy({ name: dto.name });
+    if (existing) {
+      throw new BadRequestException(
+        `Species with name '${dto.name}' already exists`,
+      );
+    }
+
+    const entity = this.speciesRepository.create({
+      ...dto,
+      createdBy: user?.sub,
+    });
+    return await this.speciesRepository.save(entity);
   }
 
-  findOne(id: number) {
-    return this.repo.findOneBy({ id });
+  findAll(params: IPaginateParams) {
+    const conditions: any = {};
+    if (params.search) {
+      conditions.name = Like(
+        `%${StringUtil.mysqlRealEscapeString(params.search)}%`,
+      );
+    }
+    if (params.status) {
+      conditions.status = Number(params.status);
+    }
+
+    return this.getPagination(conditions, params, ['breeds']);
   }
 
-  update(id: number, dto: UpdateSpeciesDto) {
-    return this.repo.update(id, dto);
+  public async findOne(id: number): Promise<SpeciesEntity> {
+    const species = await this.speciesRepository.findOneBy({ id });
+    if (!species) {
+      throw new NotFoundException(`Species with id ${id} not found`);
+    }
+    return species;
   }
 
-  remove(id: number) {
-    return this.repo.delete(id);
+  public async updateSpecies(
+    id: number,
+    dto: UpdateSpeciesDto,
+  ): Promise<boolean> {
+    const result = await this.speciesRepository.update(id, dto);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Species with id ${id} not found`);
+    }
+    return true;
+  }
+
+  public async remove(id: number): Promise<boolean> {
+    const result = await this.speciesRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Species with id ${id} not found`);
+    }
+    return true;
   }
 }

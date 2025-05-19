@@ -1,7 +1,11 @@
 import {
   BadRequestException,
+  HttpCode,
+  HttpStatus,
   Injectable,
   NotFoundException,
+  Patch,
+  UseGuards,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JWT_CONFIG, DEFAULT_ADMIN_USER } from '../../configs/constant.config';
@@ -17,6 +21,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RoleEntity } from '../role/role.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ERROR_AUTH } from '../auth/auth.constant';
+import { PermissionGuard } from '../permission/permission.guard';
+import { PermissionMetadata } from '../permission/permission.decorator';
+import { PERMISSIONS } from '../permission/permission.constant';
 
 @Injectable()
 export class UserService extends BaseService<UserEntity> {
@@ -73,11 +80,12 @@ export class UserService extends BaseService<UserEntity> {
     if (params.status) {
       conditions.status = Number(params.status);
     }
+
     return this.getPagination(conditions, params, ['role']);
   }
 
   public async changePassword(
-    id: string,
+    id: number,
     paramsChangePassword: IChangePassword,
   ): Promise<boolean> {
     const userFound = await this.userRepository.findOneBy({ id });
@@ -103,7 +111,7 @@ export class UserService extends BaseService<UserEntity> {
     return true;
   }
 
-  async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: {
@@ -122,7 +130,7 @@ export class UserService extends BaseService<UserEntity> {
     return null;
   }
 
-  async setCurrentRefreshToken(refreshToken: string, userId: string) {
+  async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.userRepository.update(userId, {
       currentHashedRefreshToken,

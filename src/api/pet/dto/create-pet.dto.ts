@@ -6,12 +6,12 @@ export class CreatePetDto {
   name: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  speciesId: number;
+  @IsString()
+  speciesName: string;
 
   @IsOptional()
-  @IsNumber()
-  breedId?: number;
+  @IsString()
+  breedName: string;
 
   @IsNotEmpty()
   @IsNumber()

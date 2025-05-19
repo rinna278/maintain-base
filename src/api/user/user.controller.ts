@@ -102,6 +102,8 @@ export class UserController {
   @ApiOkResponse(USER_SWAGGER_RESPONSE.CREATE_SUCCESS)
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(PermissionGuard)
+  @PermissionMetadata(PERMISSIONS.ADMIN_CREATE)
   createUser(@Body() body: CreateUserDto) {
     return this.userService.createUser(body);
   }

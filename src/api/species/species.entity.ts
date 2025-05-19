@@ -14,7 +14,7 @@ export class SpeciesEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, unique: true })
   name: string;
 
   @Column({ type: 'bigint', name: 'created_by', nullable: true })

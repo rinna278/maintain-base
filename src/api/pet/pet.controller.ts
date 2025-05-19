@@ -9,6 +9,8 @@ import {
   UseGuards,
   ClassSerializerInterceptor,
   UseInterceptors,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { PetService } from './pet.service';
 import { CreatePetDto } from './dto/create-pet.dto';
@@ -20,9 +22,16 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { AUTH_SWAGGER_RESPONSE } from '../auth/auth.constant';
+import { GetUser } from 'src/share/decorator/get-user.decorator';
+import { IAdminPayload } from 'src/share/common/app.interface';
+import { USER_SWAGGER_RESPONSE } from '../user/user.constant';
+import { PermissionMetadata } from '../permission/permission.decorator';
+import { PERMISSIONS } from '../permission/permission.constant';
+import { PermissionGuard } from '../permission/permission.guard';
 
 @Controller({
   version: [API_CONFIG.VERSION_V1],
@@ -37,35 +46,48 @@ import { AUTH_SWAGGER_RESPONSE } from '../auth/auth.constant';
 export class PetController {
   constructor(private readonly petService: PetService) {}
 
+  @ApiOkResponse(USER_SWAGGER_RESPONSE.GET_SUCCESS)
   @Get()
+  @HttpCode(HttpStatus.OK)
+  // @PermissionMetadata(PERMISSIONS.USER_READ)
   findAll(): Promise<PetEntity[]> {
     return this.petService.findAll();
   }
 
+  @ApiOkResponse(USER_SWAGGER_RESPONSE.GET_SUCCESS)
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<PetEntity> {
+  @HttpCode(HttpStatus.OK)
+  findOne(@Param('id') id: number): Promise<PetEntity> {
     return this.petService.findOne(id);
   }
 
   @Get('user/:userId')
-  findByUserId(@Param('userId') userId: string): Promise<PetEntity[]> {
+  findByUserId(@Param('userId') userId: number): Promise<PetEntity[]> {
     return this.petService.findByUserId(userId);
   }
 
   @Post()
-  create(@Body() createPetDto: CreatePetDto): Promise<PetEntity> {
-    return this.petService.create(createPetDto);
+  @PermissionMetadata(PERMISSIONS.PET_CREATE)
+  @UseGuards(PermissionGuard)
+  create(
+    @Body() createPetDto: CreatePetDto,
+    @GetUser() user: IAdminPayload,
+  ): Promise<PetEntity> {
+    return this.petService.create(createPetDto, user);
   }
+
+  @ApiOkResponse(USER_SWAGGER_RESPONSE.UPDATE_SUCCESS)
   @Patch(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updatePetDto: UpdatePetDto,
   ): Promise<PetEntity> {
     return this.petService.update(id, updatePetDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
+  remove(@Param('id') id: number): Promise<void> {
     return this.petService.remove(id);
   }
 }

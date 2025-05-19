@@ -12,8 +12,20 @@ export const PERMISSIONS = {
   USER_READ: 'user:read',
   USER_EDIT: 'user:update',
   USER_DELETE: 'user:delete',
+  USER_APPROVE_DOCTOR: 'user:approve-doctor',
+  USER_UPDATE: 'user:update',
+  USER_VIEW: 'user:view',
   // Permission
   PERMISSION_READ: 'permission:read',
+
+  //Admin
+  ADMIN_CREATE: 'admin:create',
+  // Pet
+  PET_CREATE: 'pet:create',
+
+  // Appointment
+  APP_CREATE: 'appointment:create',
+  APP_GET_ALL: 'appointment:get-all',
 };
 
 export const MOCK_DATA = {

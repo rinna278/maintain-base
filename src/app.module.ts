@@ -10,7 +10,8 @@ import { StorageModule } from './api/storage/storage.module';
 import { PetModule } from './api/pet/pet.module';
 import { SpeciesModule } from './api/species/species.module';
 import { BreedModule } from './api/breed/breed.module';
-
+import { DoctorRequestModule } from './api/doctor-request/doctor-request.module';
+import { AppointmentModule } from './api/appointment/appointment.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,6 +26,8 @@ import { BreedModule } from './api/breed/breed.module';
     PetModule,
     SpeciesModule,
     BreedModule,
+    DoctorRequestModule,
+    AppointmentModule,
   ],
 })
 export class AppModule {

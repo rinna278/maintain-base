@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DATABASE_CONFIG } from '../constant.config';
 import { databaseProviders } from './database.providers';
-// import { SpeciesEntity } from 'src/api/species/species.entity';
-// import { BreedEntity } from 'src/api/breed/breed.entity';
 import { PetEntity } from 'src/api/pet/pet.entity';
 import { PermissionEntity } from 'src/api/permission/permission.entity';
 import { RoleEntity } from 'src/api/role/role.entity';

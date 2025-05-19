@@ -22,6 +22,8 @@ import {
 import { API_CONFIG } from 'src/configs/constant.config';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { AUTH_SWAGGER_RESPONSE } from '../auth/auth.constant';
+import { GetUser } from 'src/share/decorator/get-user.decorator';
+import { IAdminPayload } from 'src/share/common/app.interface';
 
 @Controller({
   version: [API_CONFIG.VERSION_V1],
@@ -37,8 +39,8 @@ export class BreedController {
   constructor(private readonly breedService: BreedService) {}
 
   @Post()
-  create(@Body() dto: CreateBreedDto) {
-    return this.breedService.create(dto);
+  create(@Body() dto: CreateBreedDto, @GetUser() user: IAdminPayload) {
+    return this.breedService.create(dto, user);
   }
 
   @Get()

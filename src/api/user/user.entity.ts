@@ -39,7 +39,7 @@ export class UserEntity extends BaseEntity {
   lastLogin: Date;
 
   @Column({ type: 'bigint', name: 'role_id' })
-  roleId: string;
+  roleId: number;
 
   @ManyToOne(() => RoleEntity, (role) => role.users)
   @JoinColumn([{ name: 'role_id', referencedColumnName: 'id' }])

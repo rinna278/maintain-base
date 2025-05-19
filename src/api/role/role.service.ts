@@ -15,8 +15,8 @@ export class RoleService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    const count = await this.rolesRepository.countBy({});
-    if (count > 0) return;
+    // const count = await this.rolesRepository.countBy({});
+    // if (count > 0) return;
 
     for (const role of ROLES_DEFAULT) {
       const roleExisted = await this.rolesRepository.findOneBy({
@@ -33,6 +33,22 @@ export class RoleService implements OnModuleInit {
         rModel.type = role.type;
         rModel.permissions = permissions;
         await this.rolesRepository.save(rModel);
+      } else {
+        const permissions = await this.permissionRepository.find({
+          where: {
+            name: In(role.permissions),
+          },
+        });
+        const roleEntity = await this.rolesRepository.findOne({
+          where: { name: role.name },
+          relations: ['permissions'],
+        });
+
+        if (roleEntity) {
+          roleEntity.permissions = permissions;
+          roleEntity.type = role.type; // Cập nhật cả type nếu cần
+          await this.rolesRepository.save(roleEntity); // Cập nhật cả quan hệ
+        }
       }
     }
   }

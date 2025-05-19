@@ -11,6 +11,7 @@ export const ROLE_CONST = {
 export enum RoleTypes {
   Admin = 1,
   User = 2,
+  Doctor = 3,
 }
 
 export enum RoleStatus {
@@ -20,8 +21,8 @@ export enum RoleStatus {
 
 export enum RoleName {
   Administrator = 'Administrator',
-  UserManager = 'User Manager',
   User = 'User',
+  Doctor = 'Doctor',
 }
 
 export const ROLES_DEFAULT = [
@@ -31,18 +32,22 @@ export const ROLES_DEFAULT = [
     type: RoleTypes.Admin,
   },
   {
-    name: RoleName.UserManager,
+    name: RoleName.Doctor,
     permissions: Object.values([
       PERMISSIONS.USER_READ,
-      PERMISSIONS.USER_CREATE,
       PERMISSIONS.USER_EDIT,
       PERMISSIONS.USER_DELETE,
+      PERMISSIONS.APP_GET_ALL,
     ]),
-    type: RoleTypes.Admin,
+    type: RoleTypes.Doctor,
   },
   {
     name: RoleName.User,
-    permissions: [PERMISSIONS.USER_READ],
+    permissions: [
+      PERMISSIONS.USER_READ,
+      PERMISSIONS.USER_EDIT,
+      PERMISSIONS.PET_CREATE,
+    ],
     type: RoleTypes.User,
   },
 ];

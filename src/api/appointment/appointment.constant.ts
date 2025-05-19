@@ -1,5 +1,5 @@
 export const APPOINTMENT_CONST = {
-  MODEL_NAME: 'appointments',
+  MODEL_NAME: 'appointment',
 };
 
 export enum AppointmentStatus {

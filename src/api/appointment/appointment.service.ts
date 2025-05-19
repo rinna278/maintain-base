@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AppointmentEntity } from './appointment.entity';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { IAdminPayload } from 'src/share/common/app.interface';
 
 @Injectable()
 export class AppointmentService {
@@ -11,12 +12,12 @@ export class AppointmentService {
     private readonly repo: Repository<AppointmentEntity>,
   ) {}
 
-  create(dto: CreateAppointmentDto, userId: number) {
+  create(dto: CreateAppointmentDto, user: IAdminPayload) {
     const entity = this.repo.create({
       symptom: dto.symptom,
       appointmentTime: new Date(dto.appointmentTime),
       petId: +dto.petId,
-      userId,
+      userId: user?.sub,
     });
     return this.repo.save(entity);
   }

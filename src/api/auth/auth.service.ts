@@ -18,6 +18,8 @@ import { Repository } from 'typeorm';
 import { SignUpDto } from './dto/signup.dto';
 import { RoleEntity } from '../role/role.entity';
 import { RoleStatus, RoleTypes } from '../role/role.constant';
+// import { OtpService } from '../otp/otp.service';
+// import { MailService } from './../../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +30,8 @@ export class AuthService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    // private readonly otpService: OtpService,
+    // private readonly mailerService: MailService,
   ) {}
   createAccessToken(payload: JwtPayload): Promise<string> {
     return this.jwtService.signAsync(payload, {
@@ -114,7 +118,7 @@ export class AuthService {
     return this.generateTokenResponse(user);
   }
 
-  async refreshToken(id: string): Promise<LoginResponseDto> {
+  async refreshToken(id: number): Promise<LoginResponseDto> {
     if (!id) {
       throw new InternalServerErrorException(' Invalid user id');
     }
