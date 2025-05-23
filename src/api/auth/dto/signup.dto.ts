@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  MinLength,
 } from 'class-validator';
 
 export class SignUpDto {
@@ -15,6 +16,7 @@ export class SignUpDto {
 
   @ApiProperty({ description: 'password' })
   @IsString()
+  @MinLength(6)
   @IsNotEmpty()
   password: string;
 
@@ -27,4 +29,12 @@ export class SignUpDto {
   @IsOptional()
   @IsString()
   phone: string;
+
+  @ApiProperty({
+    description: 'One-time password sent to email',
+    example: '123456',
+  })
+  @IsNotEmpty()
+  @IsString()
+  otp: string;
 }

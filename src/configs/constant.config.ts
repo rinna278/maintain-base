@@ -49,3 +49,25 @@ export const MINIO_CONFIG = {
   ACCESS_KEY: process.env.MINIO_ACCESS_KEY || '',
   SECRET_KEY: process.env.MINIO_SECRET_KEY || '',
 };
+
+export const REDIS_CONFIG = {
+  REDIS_HOST: process.env.REDIS_HOST || 'localhost',
+  REDIS_PORT: Number(process.env.REDIS_PORT) || 6379,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD || '',
+  REDIS_TTL: Number(process.env.REDIS_TTL) || 300, // 5 minutes
+};
+
+export const OTP_CONFIG = {
+  OTP_LENGTH: Number(process.env.OTP_LENGTH) || 6,
+  OTP_EXPIRATION: Number(process.env.OTP_EXPIRATION) || 300, // 5 minutes
+};
+
+export const EMAIL_CONFIG = {
+  MAIL_HOST: process.env.MAIL_HOST || 'smtp.gmail.com',
+  MAIL_PORT: Number(process.env.MAIL_PORT) || 465,
+  MAIL_SECURE: process.env.MAIL_SECURE === 'true',
+  MAIL_USER: process.env.MAIL_USER || '',
+  MAIL_PASSWORD: process.env.MAIL_PASSWORD || '',
+  MAIL_FROM_NAME: process.env.MAIL_FROM_NAME || 'Your App',
+  MAIL_FROM_EMAIL: process.env.MAIL_FROM_EMAIL || 'noreply@yourapp.com',
+};

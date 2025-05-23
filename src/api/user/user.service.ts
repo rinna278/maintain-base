@@ -104,7 +104,7 @@ export class UserService extends BaseService<UserEntity> {
     return true;
   }
 
-  async removeRefreshToken(userId: string): Promise<boolean> {
+  async removeRefreshToken(userId: number): Promise<boolean> {
     await this.userRepository.update(userId, {
       currentHashedRefreshToken: null,
     });
@@ -165,5 +165,11 @@ export class UserService extends BaseService<UserEntity> {
       uModel.phone = data.phone;
     }
     return this.userRepository.save(uModel);
+  }
+
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    return this.userRepository.findOne({
+      where: { email: email.toLowerCase() },
+    });
   }
 }

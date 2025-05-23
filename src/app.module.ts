@@ -12,6 +12,10 @@ import { SpeciesModule } from './api/species/species.module';
 import { BreedModule } from './api/breed/breed.module';
 import { DoctorRequestModule } from './api/doctor-request/doctor-request.module';
 import { AppointmentModule } from './api/appointment/appointment.module';
+import { EmailModule } from './api/email/email.module';
+import { OtpModule } from './api/otp/otp.module';
+import { RedisModule } from './configs/redis/redis.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +32,9 @@ import { AppointmentModule } from './api/appointment/appointment.module';
     BreedModule,
     DoctorRequestModule,
     AppointmentModule,
+    EmailModule,
+    OtpModule,
+    RedisModule,
   ],
 })
 export class AppModule {

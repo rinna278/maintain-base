@@ -23,6 +23,10 @@ import { RefreshDto } from './dto/refresh.dto';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { SignUpDto } from './dto/signup.dto';
+import { SendOtpDto } from './dto/send-otp.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { IAdminPayload } from 'src/share/common/app.interface';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @ApiTags('Authentication')
 @ApiBadRequestResponse(AUTH_SWAGGER_RESPONSE.BAD_REQUEST_EXCEPTION)
@@ -40,8 +44,11 @@ export class AuthController {
   }
 
   @Post('register')
-  signUp(@Body() data: SignUpDto): Promise<unknown> {
-    return this.authService.signUp(data);
+  signUp(
+    @Body() data: SignUpDto,
+    @GetUser() user: IAdminPayload,
+  ): Promise<unknown> {
+    return this.authService.signUp(data, user);
   }
 
   @UseGuards(JwtRefreshGuard)
@@ -59,7 +66,42 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('logout')
-  logOut(@GetUser('sub') userId: string) {
+  logOut(@GetUser('id') userId: number) {
     return this.authService.removeRefreshToken(userId);
+  }
+
+  // New OTP endpoints
+  @HttpCode(HttpStatus.OK)
+  @Post('send-otp')
+  @ApiBody({
+    type: SendOtpDto,
+    description: 'Email to send OTP',
+    required: true,
+  })
+  sendOtp(@Body() data: SendOtpDto) {
+    return this.authService.sendOtp(data);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('send-otp-forgot-password')
+  @ApiBody({
+    type: SendOtpDto,
+    description: 'Email to send OTP',
+    required: true,
+  })
+  sendOtpForgotPassword(@Body() data: SendOtpDto) {
+    return this.authService.sendOtpForChangePassword(data);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('forgot-password')
+  @ApiBody({
+    description: 'Email, OTP and new password to change password',
+    type: ForgotPasswordDto,
+  })
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    const result =
+      await this.authService.changePasswordWithOtp(forgotPasswordDto);
+    return result;
   }
 }
