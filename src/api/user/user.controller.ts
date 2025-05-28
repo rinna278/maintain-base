@@ -110,6 +110,7 @@ export class UserController {
 
   @ApiOkResponse(USER_SWAGGER_RESPONSE.GET_SUCCESS)
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(PermissionGuard)
   @PermissionMetadata(PERMISSIONS.USER_READ)
   public get(@Param() param: ParamIdBaseDto): Promise<UserEntity> {

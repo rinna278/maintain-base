@@ -13,6 +13,7 @@ import {
   ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
   ApiBody,
+  ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { GetUser } from '../../share/decorator/get-user.decorator';
 import { AUTH_SWAGGER_RESPONSE } from './auth.constant';
@@ -24,7 +25,6 @@ import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { SignUpDto } from './dto/signup.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
-import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { IAdminPayload } from 'src/share/common/app.interface';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
@@ -43,6 +43,9 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  @ApiCreatedResponse(AUTH_SWAGGER_RESPONSE.REGISTER_SUCCESS)
+  @ApiBadRequestResponse(AUTH_SWAGGER_RESPONSE.REGISTER_FAIL)
+  @HttpCode(HttpStatus.CREATED)
   @Post('register')
   signUp(
     @Body() data: SignUpDto,
@@ -70,7 +73,8 @@ export class AuthController {
     return this.authService.removeRefreshToken(userId);
   }
 
-  // New OTP endpoints
+  @ApiOkResponse(AUTH_SWAGGER_RESPONSE.SEND_OTP_SUCCESS)
+  @ApiBadRequestResponse(AUTH_SWAGGER_RESPONSE.SEND_OTP_FAIL)
   @HttpCode(HttpStatus.OK)
   @Post('send-otp')
   @ApiBody({
@@ -82,6 +86,8 @@ export class AuthController {
     return this.authService.sendOtp(data);
   }
 
+  @ApiOkResponse(AUTH_SWAGGER_RESPONSE.SEND_OTP_SUCCESS)
+  @ApiBadRequestResponse(AUTH_SWAGGER_RESPONSE.SEND_OTP_FAIL)
   @HttpCode(HttpStatus.OK)
   @Post('send-otp-forgot-password')
   @ApiBody({
@@ -99,6 +105,8 @@ export class AuthController {
     description: 'Email, OTP and new password to change password',
     type: ForgotPasswordDto,
   })
+  @ApiOkResponse(AUTH_SWAGGER_RESPONSE.FORGOT_PASSWORD_SUCCESS)
+  @ApiBadRequestResponse(AUTH_SWAGGER_RESPONSE.FORGOT_PASSWORD_FAIL)
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     const result =
       await this.authService.changePasswordWithOtp(forgotPasswordDto);

@@ -11,6 +11,7 @@ import { UpdateSpeciesDto } from './dto/update-species.dto';
 import { IAdminPayload, IPaginateParams } from 'src/share/common/app.interface';
 import { StringUtil } from 'src/share/utils/string.util';
 import { BaseService } from 'src/share/database/base.service';
+import { ERROR_SPECIES } from './species.constant';
 
 @Injectable()
 export class SpeciesService extends BaseService<SpeciesEntity> {
@@ -27,9 +28,7 @@ export class SpeciesService extends BaseService<SpeciesEntity> {
   ): Promise<SpeciesEntity> {
     const existing = await this.speciesRepository.findOneBy({ name: dto.name });
     if (existing) {
-      throw new BadRequestException(
-        `Species with name '${dto.name}' already exists`,
-      );
+      throw new BadRequestException(ERROR_SPECIES.SPECIES_NAME_EXISTED.MESSAGE);
     }
 
     const entity = this.speciesRepository.create({
@@ -56,7 +55,7 @@ export class SpeciesService extends BaseService<SpeciesEntity> {
   public async findOne(id: number): Promise<SpeciesEntity> {
     const species = await this.speciesRepository.findOneBy({ id });
     if (!species) {
-      throw new NotFoundException(`Species with id ${id} not found`);
+      throw new NotFoundException(ERROR_SPECIES.SPECIES_NOT_FOUND.MESSAGE);
     }
     return species;
   }
@@ -67,7 +66,7 @@ export class SpeciesService extends BaseService<SpeciesEntity> {
   ): Promise<boolean> {
     const result = await this.speciesRepository.update(id, dto);
     if (result.affected === 0) {
-      throw new NotFoundException(`Species with id ${id} not found`);
+      throw new NotFoundException(ERROR_SPECIES.SPECIES_NOT_FOUND.MESSAGE);
     }
     return true;
   }
@@ -75,7 +74,7 @@ export class SpeciesService extends BaseService<SpeciesEntity> {
   public async remove(id: number): Promise<boolean> {
     const result = await this.speciesRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Species with id ${id} not found`);
+      throw new NotFoundException(ERROR_SPECIES.SPECIES_NOT_FOUND.MESSAGE);
     }
     return true;
   }

@@ -11,7 +11,7 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtPayload } from './payloads/jwt-payload';
 import { JWT_CONFIG } from '../../configs/constant.config';
-import { ERROR_AUTH } from './auth.constant';
+import { ACCEPT_AUTH, ERROR_AUTH } from './auth.constant';
 import { UserEntity } from '../user/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -24,6 +24,7 @@ import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { IAdminPayload } from 'src/share/common/app.interface';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { EmailQueueService } from '../queue/email-queue.service';
 
 @Injectable()
 export class AuthService {
@@ -36,6 +37,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly otpService: OtpService,
     private readonly emailService: EmailService,
+    private readonly emailQueueService: EmailQueueService,
   ) {}
   createAccessToken(payload: JwtPayload): Promise<string> {
     return this.jwtService.signAsync(payload, {
@@ -97,7 +99,7 @@ export class AuthService {
 
     const isValid = await this.otpService.verifyOtp(data.email, data.otp);
     if (!isValid) {
-      throw new BadRequestException('Invalid or expired OTP');
+      throw new BadRequestException(ERROR_AUTH.OTP_INVALID.MESSAGE);
     }
 
     const uModel = new UserEntity();
@@ -130,7 +132,9 @@ export class AuthService {
 
   async refreshToken(id: number): Promise<LoginResponseDto> {
     if (!id) {
-      throw new InternalServerErrorException(' Invalid user id');
+      throw new InternalServerErrorException(
+        ERROR_AUTH.USER_ID_INVALID.MESSAGE,
+      );
     }
     const user = await this.userRepository.findOne({
       where: {
@@ -159,7 +163,7 @@ export class AuthService {
     // Check if user exists
     const user = await this.userService.findByEmail(email);
     if (user) {
-      throw new BadRequestException('This account already exists');
+      throw new BadRequestException(ERROR_AUTH.USER_EMAIL_EXISTED.MESSAGE);
     }
 
     // Check if there's already an active OTP
@@ -167,8 +171,7 @@ export class AuthService {
     if (hasActiveOtp) {
       return {
         success: false,
-        message:
-          'An OTP is already active for this email. Please wait before requesting a new one.',
+        message: ERROR_AUTH.OTP_EXPIRED.MESSAGE,
       };
     }
 
@@ -178,19 +181,24 @@ export class AuthService {
     // Store OTP in Redis
     await this.otpService.storeOtp(email, otp);
 
-    // Send OTP via email
-    const emailSent = await this.emailService.sendOtpEmail(email, otp);
+    try {
+      await this.emailQueueService.addOtpEmailJob({
+        email,
+        otp,
+        type: 'register',
+      });
 
-    if (!emailSent) {
-      // If email fails, clean up the stored OTP
+      return {
+        success: true,
+        message: ACCEPT_AUTH.OTP_SENT_SUCCESS.MESSAGE,
+      };
+    } catch (e) {
+      // If queue fails, clean up the stored OTP
       await this.otpService.invalidateOtp(email);
-      throw new InternalServerErrorException('Failed to send OTP email');
+      throw new InternalServerErrorException(
+        ERROR_AUTH.OTP_QUEUE_FAILED.MESSAGE,
+      );
     }
-
-    return {
-      success: true,
-      message: 'OTP sent successfully to your email',
-    };
   }
 
   async sendOtpForChangePassword(
@@ -201,7 +209,7 @@ export class AuthService {
     // Check if user exists
     const user = await this.userService.findByEmail(email);
     if (!user) {
-      throw new BadRequestException('This account is not exists');
+      throw new BadRequestException(ERROR_AUTH.USER_EMAIL_NOT_EXIST.MESSAGE);
     }
 
     // Check if there's already an active OTP
@@ -209,8 +217,7 @@ export class AuthService {
     if (hasActiveOtp) {
       return {
         success: false,
-        message:
-          'An OTP is already active for this email. Please wait before requesting a new one.',
+        message: ERROR_AUTH.OTP_EXPIRED.MESSAGE,
       };
     }
 
@@ -220,19 +227,24 @@ export class AuthService {
     // Store OTP in Redis
     await this.otpService.storeOtp(email, otp);
 
-    // Send OTP via email
-    const emailSent = await this.emailService.sendOtpEmail(email, otp);
+    try {
+      await this.emailQueueService.addOtpEmailJob({
+        email,
+        otp,
+        type: 'forgot-password',
+      });
 
-    if (!emailSent) {
-      // If email fails, clean up the stored OTP
+      return {
+        success: true,
+        message: ACCEPT_AUTH.OTP_SENT_SUCCESS.MESSAGE,
+      };
+    } catch (e) {
+      // If queue fails, clean up the stored OTP
       await this.otpService.invalidateOtp(email);
-      throw new InternalServerErrorException('Failed to send OTP email');
+      throw new InternalServerErrorException(
+        ERROR_AUTH.OTP_QUEUE_FAILED.MESSAGE,
+      );
     }
-
-    return {
-      success: true,
-      message: 'OTP sent successfully to your email',
-    };
   }
 
   /**
@@ -249,13 +261,13 @@ export class AuthService {
     if (!isValid) {
       return {
         success: false,
-        message: 'Invalid or expired OTP',
+        message: ERROR_AUTH.OTP_INVALID.MESSAGE,
       };
     }
 
     return {
       success: true,
-      message: 'OTP verified successfully',
+      message: ACCEPT_AUTH.OTP_VERIFIED.MESSAGE,
     };
   }
 
@@ -263,18 +275,18 @@ export class AuthService {
     const isValid = await this.otpService.verifyOtp(dto.email, dto.otp);
 
     if (!isValid) {
-      throw new BadRequestException('OTP is invalid or expired');
+      throw new BadRequestException(ERROR_AUTH.OTP_INVALID.MESSAGE);
     }
 
     const user = await this.userService.findByEmail(dto.email);
     if (!user) {
-      throw new BadRequestException('User is not exists');
+      throw new BadRequestException(ERROR_AUTH.USER_EMAIL_NOT_EXIST.MESSAGE);
     }
 
     user.password = bcrypt.hashSync(dto.newPassword, JWT_CONFIG.SALT_ROUNDS);
     console.log(user.password);
     await user.save();
 
-    return { message: "You've changed password successfully" };
+    return { message: ACCEPT_AUTH.PASSWORD_CHANGED.MESSAGE };
   }
 }

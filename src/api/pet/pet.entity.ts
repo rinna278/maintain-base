@@ -11,9 +11,6 @@ export class PetEntity extends BaseEntity {
   @Column({ length: 255 })
   name: string;
 
-  @Column({ type: 'bigint', name: 'created_by', nullable: true })
-  createdBy: number;
-
   @Column({ type: 'bigint', name: 'user_id' })
   userId: number;
 
@@ -21,7 +18,7 @@ export class PetEntity extends BaseEntity {
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
   user: UserEntity;
 
-  @Column({ type: 'int', name: 'species_id', nullable: true })
+  @Column({ type: 'int', name: 'species_id' })
   speciesId: number;
 
   @ManyToOne(() => SpeciesEntity, (species) => species.pets)

@@ -12,9 +12,11 @@ import { OtpModule } from '../otp/otp.module';
 import { EmailModule } from '../email/email.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
-
+import { QueueModule } from '../queue/queue.module';
+import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh-token.strategy';
 @Module({
   imports: [
+    QueueModule,
     ConfigModule,
     UserModule,
     OtpModule,
@@ -29,7 +31,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     TypeOrmModule.forFeature([UserEntity, RoleEntity]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, JwtRefreshTokenStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

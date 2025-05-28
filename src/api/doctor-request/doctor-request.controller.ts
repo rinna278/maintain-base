@@ -28,6 +28,8 @@ import { IAdminPayload } from '../../share/common/app.interface';
 import { PERMISSIONS } from '../permission/permission.constant';
 import { CreateDoctorRequestDto } from './dto/create-doctor-request.dto';
 import { FilterDoctorRequestDto } from './dto/filter-doctor-request.dto';
+import { DOCTOR_REQUEST_SWAGGER_RESPONSE } from './doctor-request.constant';
+import { AUTH_SWAGGER_RESPONSE } from '../auth/auth.constant';
 
 @Controller({
   version: [API_CONFIG.VERSION_V1],
@@ -36,12 +38,12 @@ import { FilterDoctorRequestDto } from './dto/filter-doctor-request.dto';
 @ApiTags('Doctor Request')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@ApiBadRequestResponse({ description: 'Invalid request' })
-@ApiInternalServerErrorResponse({ description: 'Server error' })
+@ApiBadRequestResponse(AUTH_SWAGGER_RESPONSE.BAD_REQUEST_EXCEPTION)
+@ApiInternalServerErrorResponse(AUTH_SWAGGER_RESPONSE.INTERNAL_SERVER_EXCEPTION)
 export class DoctorRequestController {
   constructor(private readonly service: DoctorRequestService) {}
 
-  @ApiOkResponse({ description: 'Send doctor request successfully' })
+  @ApiOkResponse(DOCTOR_REQUEST_SWAGGER_RESPONSE.CREATE_REQUEST_SUCCESS)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public createRequest(
@@ -51,35 +53,36 @@ export class DoctorRequestController {
     return this.service.createRequest(user.sub, dto);
   }
 
-  @ApiOkResponse({ description: 'Admin approve request successfully' })
-  @Put(':id/approve')
+  @ApiOkResponse(DOCTOR_REQUEST_SWAGGER_RESPONSE.APPROVE_REQUEST_SUCCESS)
+  @Put('approve/:id')
   @UseGuards(PermissionGuard)
-  @PermissionMetadata(PERMISSIONS.USER_UPDATE)
+  @PermissionMetadata(PERMISSIONS.USER_APPROVE_DOCTOR)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async approveRequest(@Param() param: ParamIdBaseDto) {
     await this.service.approveRequest(+param.id);
   }
 
-  @ApiOkResponse({ description: 'Admin reject request successfully' })
-  @Put(':id/reject')
+  @ApiOkResponse(DOCTOR_REQUEST_SWAGGER_RESPONSE.REJECT_REQUEST_SUCCESS)
+  @Put('reject/:id')
   @UseGuards(PermissionGuard)
-  @PermissionMetadata(PERMISSIONS.USER_UPDATE)
+  @PermissionMetadata(PERMISSIONS.USER_REJECT_DOCTOR)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async rejectRequest(@Param() param: ParamIdBaseDto) {
     await this.service.rejectRequest(+param.id);
   }
 
-  @ApiOkResponse({ description: "Admin revoke doctor's role successfully" })
+  @ApiOkResponse(DOCTOR_REQUEST_SWAGGER_RESPONSE.REVOKE_DOCTOR_ROLE_SUCCESS)
   @Put('revoke/:userId')
   @UseGuards(PermissionGuard)
-  @PermissionMetadata(PERMISSIONS.USER_UPDATE)
+  @PermissionMetadata(PERMISSIONS.USER_REVOKE_DOCTOR)
   @HttpCode(HttpStatus.NO_CONTENT)
   public async revokeDoctorRole(@Param('userId') userId: number) {
     await this.service.revokeDoctorRole(userId);
   }
 
-  @ApiOkResponse({ description: 'List of doctor requests' })
+  @ApiOkResponse(DOCTOR_REQUEST_SWAGGER_RESPONSE.GET_LIST_SUCCESS)
   @Get()
+  @HttpCode(HttpStatus.OK)
   @UseGuards(PermissionGuard)
   @PermissionMetadata(PERMISSIONS.USER_VIEW)
   public async getRequests(@Query() query: FilterDoctorRequestDto) {

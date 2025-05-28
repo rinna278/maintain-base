@@ -38,6 +38,8 @@ export const ROLES_DEFAULT = [
       PERMISSIONS.USER_EDIT,
       PERMISSIONS.USER_DELETE,
       PERMISSIONS.APP_GET_ALL,
+      PERMISSIONS.PET_READ,
+      PERMISSIONS.APP_CONFIRM,
     ]),
     type: RoleTypes.Doctor,
   },

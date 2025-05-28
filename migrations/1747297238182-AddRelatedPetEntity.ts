@@ -2,6 +2,15 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddRelatedPetEntity1747297238182 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'appointment_status_enum') THEN
+          CREATE TYPE appointment_status_enum AS ENUM ('0', '1', '2', '3');
+        END IF;
+      END
+      $$;
+    `);
     // Tạo bảng species
     await queryRunner.query(`
       CREATE TABLE "species" (
@@ -37,10 +46,9 @@ export class AddRelatedPetEntity1747297238182 implements MigrationInterface {
       CREATE TABLE "pet" (
         "id" BIGSERIAL PRIMARY KEY,
         "name" VARCHAR(255) NOT NULL,
-        "user_id" BIGINT NOT NULL,
-        "species_id" BIGINT NULL,
+        "species_id" BIGINT NOT NULL,
         "breed_id" BIGINT NULL,
-        "created_by" BIGINT NULL,
+        "user_id" BIGINT NULL,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
         "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
         "deleted_at" timestamp NULL,
@@ -72,12 +80,12 @@ export class AddRelatedPetEntity1747297238182 implements MigrationInterface {
     await queryRunner.query(`
       CREATE TABLE "appointment" (
         "id" BIGSERIAL PRIMARY KEY,
-        "status" VARCHAR(255) NOT NULL DEFAULT 'PENDING',
+        "status" "appointment_status_enum" NOT NULL DEFAULT '1',
         "symptom" VARCHAR(255) NULL,
         "appointment_time" TIMESTAMP NOT NULL,
         "user_id" BIGINT NOT NULL,
+        "doctor_id" BIGINT NULL,
         "pet_id" BIGINT NOT NULL,
-        "created_by" BIGINT NULL,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
         "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
         "deleted_at" timestamp NULL,

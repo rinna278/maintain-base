@@ -32,6 +32,7 @@ import { USER_SWAGGER_RESPONSE } from '../user/user.constant';
 import { PermissionMetadata } from '../permission/permission.decorator';
 import { PERMISSIONS } from '../permission/permission.constant';
 import { PermissionGuard } from '../permission/permission.guard';
+import { PET_SWAGGER_RESPONSE } from './pet.constant';
 
 @Controller({
   version: [API_CONFIG.VERSION_V1],
@@ -46,26 +47,40 @@ import { PermissionGuard } from '../permission/permission.guard';
 export class PetController {
   constructor(private readonly petService: PetService) {}
 
-  @ApiOkResponse(USER_SWAGGER_RESPONSE.GET_SUCCESS)
+  @ApiOkResponse(PET_SWAGGER_RESPONSE.GET_LIST_SUCCESS)
   @Get()
   @HttpCode(HttpStatus.OK)
-  // @PermissionMetadata(PERMISSIONS.USER_READ)
+  @PermissionMetadata(PERMISSIONS.PET_READ)
+  @UseGuards(PermissionGuard)
   findAll(): Promise<PetEntity[]> {
     return this.petService.findAll();
   }
 
-  @ApiOkResponse(USER_SWAGGER_RESPONSE.GET_SUCCESS)
+  @ApiOkResponse(PET_SWAGGER_RESPONSE.GET_MY_PETS_SUCCESS)
+  @Get('my-pets')
+  @HttpCode(HttpStatus.OK)
+  getMyPets(@GetUser() user: IAdminPayload): Promise<PetEntity[]> {
+    return this.petService.findByUserId(user.sub);
+  }
+
+  @ApiOkResponse(PET_SWAGGER_RESPONSE.GET_SUCCESS)
   @Get(':id')
+  @PermissionMetadata(PERMISSIONS.PET_READ)
+  @UseGuards(PermissionGuard)
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id') id: number): Promise<PetEntity> {
     return this.petService.findOne(id);
   }
 
+  @PermissionMetadata(PERMISSIONS.PET_READ_BY_USER)
+  @UseGuards(PermissionGuard)
+  @ApiOkResponse(PET_SWAGGER_RESPONSE.GET_PETS_OF_USER_SUCCESS)
   @Get('user/:userId')
   findByUserId(@Param('userId') userId: number): Promise<PetEntity[]> {
     return this.petService.findByUserId(userId);
   }
 
+  @ApiOkResponse(PET_SWAGGER_RESPONSE.CREATE_SUCCESS)
   @Post()
   @PermissionMetadata(PERMISSIONS.PET_CREATE)
   @UseGuards(PermissionGuard)
@@ -76,6 +91,8 @@ export class PetController {
     return this.petService.create(createPetDto, user);
   }
 
+  @PermissionMetadata(PERMISSIONS.PET_UPDATE)
+  @UseGuards(PermissionGuard)
   @ApiOkResponse(USER_SWAGGER_RESPONSE.UPDATE_SUCCESS)
   @Patch(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -86,6 +103,9 @@ export class PetController {
     return this.petService.update(id, updatePetDto);
   }
 
+  @PermissionMetadata(PERMISSIONS.PET_DELETE)
+  @UseGuards(PermissionGuard)
+  @ApiOkResponse(PET_SWAGGER_RESPONSE.DELETE_SUCCESS)
   @Delete(':id')
   remove(@Param('id') id: number): Promise<void> {
     return this.petService.remove(id);

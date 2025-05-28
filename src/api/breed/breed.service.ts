@@ -5,6 +5,7 @@ import { BreedEntity } from './breed.entity';
 import { CreateBreedDto } from './dto/create-breed.dto';
 import { UpdateBreedDto } from './dto/update-breed.dto';
 import { IAdminPayload } from 'src/share/common/app.interface';
+import { ERROR_BREED } from './breed.constant';
 
 @Injectable()
 export class BreedService {
@@ -16,9 +17,7 @@ export class BreedService {
   async create(dto: CreateBreedDto, user: IAdminPayload) {
     const existing = await this.repo.findOneBy({ name: dto.name });
     if (existing) {
-      throw new BadRequestException(
-        `Breed with name '${dto.name}' already exists`,
-      );
+      throw new BadRequestException(ERROR_BREED.BREED_ALREADY_EXIST.MESSAGE);
     }
 
     const entity = this.repo.create({
