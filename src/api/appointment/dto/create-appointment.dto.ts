@@ -17,9 +17,5 @@ export class CreateAppointmentDto {
 
   @IsNotEmpty()
   @IsNumber()
-  userId: number;
-
-  @IsNotEmpty()
-  @IsNumber()
   petId: number;
 }

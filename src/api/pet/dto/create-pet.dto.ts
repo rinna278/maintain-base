@@ -1,19 +1,18 @@
-import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreatePetDto {
   @IsNotEmpty()
   @IsString()
   name: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  speciesId: number;
+  @IsOptional()
+  @Transform(({ value }) => (value === null ? undefined : value))
+  @IsString()
+  speciesName?: string;
 
   @IsOptional()
-  @IsNumber()
-  breedId?: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  userId: number;
+  @Transform(({ value }) => (value === null ? undefined : value))
+  @IsString()
+  breedName?: string;
 }

@@ -114,7 +114,8 @@ export const USER_SWAGGER_RESPONSE = {
     },
     'List success',
   ),
-  CREATE_SUCCESS: swaggerSchemaExample(MOCK_USER, 'Update success'),
+  CREATE_SUCCESS: swaggerSchemaExample(MOCK_USER, 'Create success'),
   UPDATE_SUCCESS: swaggerSchemaExample('', 'Update success'),
   GET_SUCCESS: swaggerSchemaExample(MOCK_USER_WITH_ROLE, 'Get success'),
+  DELETE_SUCCESS: swaggerSchemaExample('', 'Delete success'),
 };

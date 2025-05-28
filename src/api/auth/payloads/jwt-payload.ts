@@ -1,7 +1,7 @@
 import { RoleEntity } from 'src/api/role/role.entity';
 
 export interface JwtPayload {
-  sub: string;
+  sub: number;
   email: string;
   fullName: string;
   iat?: string;
@@ -9,5 +9,5 @@ export interface JwtPayload {
 }
 
 export interface JwtRefreshTokenPayload {
-  userId: string;
+  userId: number;
 }

@@ -10,6 +10,11 @@ import { StorageModule } from './api/storage/storage.module';
 import { PetModule } from './api/pet/pet.module';
 import { SpeciesModule } from './api/species/species.module';
 import { BreedModule } from './api/breed/breed.module';
+import { DoctorRequestModule } from './api/doctor-request/doctor-request.module';
+import { AppointmentModule } from './api/appointment/appointment.module';
+import { EmailModule } from './api/email/email.module';
+import { OtpModule } from './api/otp/otp.module';
+import { RedisModule } from './configs/redis/redis.module';
 
 @Module({
   imports: [
@@ -25,6 +30,11 @@ import { BreedModule } from './api/breed/breed.module';
     PetModule,
     SpeciesModule,
     BreedModule,
+    DoctorRequestModule,
+    AppointmentModule,
+    EmailModule,
+    OtpModule,
+    RedisModule,
   ],
 })
 export class AppModule {

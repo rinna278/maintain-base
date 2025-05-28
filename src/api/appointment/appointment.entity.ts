@@ -19,8 +19,8 @@ export class AppointmentEntity extends BaseEntity {
   @Column({ type: 'timestamp', name: 'appointment_time' })
   appointmentTime: Date;
 
-  @Column({ type: 'bigint', name: 'user_id' })
-  userId: number;
+  @Column({ type: 'bigint', name: 'doctor_id', nullable: true })
+  doctorId: number;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
@@ -33,6 +33,6 @@ export class AppointmentEntity extends BaseEntity {
   @JoinColumn([{ name: 'pet_id', referencedColumnName: 'id' }])
   pet: PetEntity;
 
-  @Column({ type: 'bigint', name: 'created_by', nullable: true })
-  createdBy: number;
+  @Column({ type: 'bigint', name: 'user_id' })
+  userId: number;
 }

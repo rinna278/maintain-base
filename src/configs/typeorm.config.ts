@@ -27,4 +27,5 @@ export default new DataSource({
   migrations: [__dirname + '/../../migrations/*.ts'],
   synchronize: false,
   logging: DATABASE_CONFIG.logging,
+  schema: 'public',
 });
