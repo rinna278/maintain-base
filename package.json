@@ -21,7 +21,7 @@
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "typeorm:run-migrations": "npm run typeorm migration:run -- -d ./src/configs/typeorm.config.ts",
     "typeorm:generate-migration": "npm run typeorm -- -d ./src/configs/typeorm.config.ts migration:generate ./migrations/$npm_config_name -p && eslint \"migrations/*.ts\" --fix",
-    "typeorm:create-migration": "npm run typeorm -- migration:create ./migrations/$npm_config_name && eslint \"migrations/*.ts\" --fix",
+    "typeorm:create-migration": "npm run typeorm -- ./src/configs/typeorm.config.ts migration:create ./migrations/$npm_config_name && eslint \"migrations/*.ts\" --fix",
     "typeorm:revert-migration": "npm run typeorm -- -d ./src/configs/typeorm.config.ts migration:revert"
   },
   "dependencies": {

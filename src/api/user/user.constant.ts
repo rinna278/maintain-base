@@ -45,7 +45,7 @@ export const ERROR_USER = {
 };
 
 export const MOCK_USER: IUserPayload = {
-  id: '1',
+  id: 1,
   createdAt: '2023-02-24T01:01:18.077Z',
   updatedAt: '2023-03-01T21:29:20.257Z',
   name: 'Richard Do',

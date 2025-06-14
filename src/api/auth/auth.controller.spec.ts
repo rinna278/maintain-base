@@ -88,7 +88,7 @@ describe('AuthController', () => {
 
   describe('logout', () => {
     it('should return success', async () => {
-      const result = await authController.logOut('1111');
+      const result = await authController.logOut(1111);
       expect(result).toStrictEqual({
         status: true,
       });

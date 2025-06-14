@@ -4,24 +4,28 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { AppointmentEntity } from './appointment.entity';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { IAdminPayload } from 'src/share/common/app.interface';
+import { IAdminPayload, IPaginateParams } from 'src/share/common/app.interface';
 import { ConfirmAppointmentDto } from './dto/confirm-appointment.dto';
 import { AppointmentStatus, ERROR_APPOINTMENT } from './appointment.constant';
 import { PetEntity } from '../pet/pet.entity';
+import { StringUtil } from 'src/share/utils/string.util';
+import { BaseService } from 'src/share/database/base.service';
 
 @Injectable()
-export class AppointmentService {
+export class AppointmentService extends BaseService<AppointmentEntity> {
   constructor(
     @InjectRepository(AppointmentEntity)
     private readonly repo: Repository<AppointmentEntity>,
     @InjectRepository(PetEntity)
     private readonly petRepo: Repository<PetEntity>,
-  ) {}
+  ) {
+    super(repo);
+  }
 
-  async create(dto: CreateAppointmentDto, user: IAdminPayload) {
+  async createAppointment(dto: CreateAppointmentDto, user: IAdminPayload) {
     const pet = await this.petRepo.findOne({
       where: {
         id: +dto.petId,
@@ -58,8 +62,18 @@ export class AppointmentService {
     return this.repo.save(entity);
   }
 
-  findAll() {
-    return this.repo.find();
+  findAll(params: IPaginateParams) {
+    const conditions: any = {};
+    if (params.search) {
+      conditions.name = Like(
+        `%${StringUtil.mysqlRealEscapeString(params.search)}%`,
+      );
+    }
+    if (params.status) {
+      conditions.status = Number(params.status);
+    }
+
+    return this.getPagination(conditions, params);
   }
 
   async getMyAppointments(user: IAdminPayload) {
@@ -75,6 +89,27 @@ export class AppointmentService {
     }
 
     return myAppt;
+  }
+
+  async cancelAppointment(id: number, user: IAdminPayload) {
+    const appointment = await this.repo.findOne({
+      where: { id, userId: user.sub },
+    });
+
+    if (!appointment) {
+      throw new NotFoundException(
+        ERROR_APPOINTMENT.APPOINTMENT_NOT_FOUND.MESSAGE,
+      );
+    }
+
+    if (appointment.status !== AppointmentStatus.PENDING) {
+      throw new ForbiddenException(
+        ERROR_APPOINTMENT.APPOINTMENT_CANNOT_CANCEL.MESSAGE,
+      );
+    }
+
+    appointment.status = AppointmentStatus.CANCELLED;
+    return this.repo.save(appointment);
   }
 
   async confirm(id: number, dto: ConfirmAppointmentDto, user: IAdminPayload) {

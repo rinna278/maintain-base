@@ -64,18 +64,19 @@ export class SpeciesService extends BaseService<SpeciesEntity> {
     id: number,
     dto: UpdateSpeciesDto,
   ): Promise<boolean> {
-    const result = await this.speciesRepository.update(id, dto);
-    if (result.affected === 0) {
+    const existing = await this.speciesRepository.findOneBy({ id });
+    if (!existing) {
       throw new NotFoundException(ERROR_SPECIES.SPECIES_NOT_FOUND.MESSAGE);
     }
-    return true;
+    const result = await this.update(id, dto);
+    return result.affected !== undefined && result.affected > 0;
   }
 
   public async remove(id: number): Promise<boolean> {
-    const result = await this.speciesRepository.delete(id);
-    if (result.affected === 0) {
+    const existing = await this.speciesRepository.findOneBy({ id });
+    if (!existing) {
       throw new NotFoundException(ERROR_SPECIES.SPECIES_NOT_FOUND.MESSAGE);
     }
-    return true;
+    return this.delete(id);
   }
 }

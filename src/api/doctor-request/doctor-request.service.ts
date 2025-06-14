@@ -30,7 +30,7 @@ export class DoctorRequestService {
       userId,
       status: DoctorRequestStatus.PENDING,
     });
-    if (existing) throw new BadRequestException('Bạn đã gửi yêu cầu rồi.');
+    if (existing) throw new BadRequestException("You've already sent request.");
 
     const request = this.doctorRequestRepo.create({
       userId,
@@ -45,7 +45,7 @@ export class DoctorRequestService {
 
     const doctorRole = await this.roleRepo.findOneBy({ name: RoleName.Doctor });
 
-    if (!doctorRole) throw new Error('Role doctor chưa được khởi tạo');
+    if (!doctorRole) throw new Error('Role doctor not found');
 
     await this.userRepo.update(request.userId, { roleId: doctorRole.id });
 
@@ -66,18 +66,18 @@ export class DoctorRequestService {
       where: { id: userId },
       relations: ['role'],
     });
-    if (!user) throw new NotFoundException('User không tồn tại');
+    if (!user) throw new NotFoundException('User not found');
 
     const doctorRole = await this.roleRepo.findOneBy({ name: RoleName.Doctor });
 
-    if (!doctorRole) throw new Error('Role doctor chưa được khởi tạo');
+    if (!doctorRole) throw new Error('Role doctor not found');
 
     if (user.role.name !== doctorRole.name) {
-      throw new BadRequestException('Người dùng không có quyền Doctor');
+      throw new BadRequestException('User have no role Doctor');
     }
 
     const userRole = await this.roleRepo.findOneBy({ name: RoleName.User });
-    if (!userRole) throw new Error('Không tìm thấy role User');
+    if (!userRole) throw new Error('not found role User');
 
     user.role.id = userRole.id;
     return this.userRepo.save(user);

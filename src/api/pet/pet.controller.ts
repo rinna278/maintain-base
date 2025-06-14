@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { PetService } from './pet.service';
 import { CreatePetDto } from './dto/create-pet.dto';
@@ -33,6 +34,7 @@ import { PermissionMetadata } from '../permission/permission.decorator';
 import { PERMISSIONS } from '../permission/permission.constant';
 import { PermissionGuard } from '../permission/permission.guard';
 import { PET_SWAGGER_RESPONSE } from './pet.constant';
+import { QueryParamDto } from '../user/dto/query-param.dto';
 
 @Controller({
   version: [API_CONFIG.VERSION_V1],
@@ -52,8 +54,8 @@ export class PetController {
   @HttpCode(HttpStatus.OK)
   @PermissionMetadata(PERMISSIONS.PET_READ)
   @UseGuards(PermissionGuard)
-  findAll(): Promise<PetEntity[]> {
-    return this.petService.findAll();
+  findAll(@Query() query: QueryParamDto): Promise<any> {
+    return this.petService.findAll(query);
   }
 
   @ApiOkResponse(PET_SWAGGER_RESPONSE.GET_MY_PETS_SUCCESS)
@@ -88,7 +90,7 @@ export class PetController {
     @Body() createPetDto: CreatePetDto,
     @GetUser() user: IAdminPayload,
   ): Promise<PetEntity> {
-    return this.petService.create(createPetDto, user);
+    return this.petService.createPet(createPetDto, user);
   }
 
   @PermissionMetadata(PERMISSIONS.PET_UPDATE)
@@ -100,7 +102,7 @@ export class PetController {
     @Param('id') id: number,
     @Body() updatePetDto: UpdatePetDto,
   ): Promise<PetEntity> {
-    return this.petService.update(id, updatePetDto);
+    return this.petService.updatePet(id, updatePetDto);
   }
 
   @PermissionMetadata(PERMISSIONS.PET_DELETE)

@@ -20,6 +20,12 @@ export class BreedEntity extends BaseEntity {
   @Column({ length: 255, unique: true })
   name: string;
 
+  @Column()
+  UIS: number;
+
+  @Column()
+  UIS1: number;
+
   @Column({ type: 'bigint', name: 'created_by', nullable: true })
   createdBy: number;
 

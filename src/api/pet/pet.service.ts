@@ -1,16 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { PetEntity } from './pet.entity';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
 import { SpeciesEntity } from '../species/species.entity';
 import { BreedEntity } from '../breed/breed.entity';
-import { IAdminPayload } from 'src/share/common/app.interface';
+import { IAdminPayload, IPaginateParams } from 'src/share/common/app.interface';
 import { ERROR_PET } from './pet.constant';
+import { BaseService } from 'src/share/database/base.service';
+import { StringUtil } from 'src/share/utils/string.util';
 
 @Injectable()
-export class PetService {
+export class PetService extends BaseService<PetEntity> {
   constructor(
     @InjectRepository(PetEntity)
     private petRepository: Repository<PetEntity>,
@@ -20,18 +22,27 @@ export class PetService {
 
     @InjectRepository(BreedEntity)
     private breedRepository: Repository<BreedEntity>,
-  ) {}
+  ) {
+    super(petRepository);
+  }
 
-  async findAll(): Promise<PetEntity[]> {
-    return this.petRepository.find({
-      relations: ['user', 'species', 'breed'],
-    });
+  findAll(params: IPaginateParams) {
+    const conditions: any = {};
+    if (params.search) {
+      conditions.name = Like(
+        `%${StringUtil.mysqlRealEscapeString(params.search)}%`,
+      );
+    }
+    if (params.status) {
+      conditions.status = Number(params.status);
+    }
+
+    return this.getPagination(conditions, params);
   }
 
   async findOne(id: number): Promise<PetEntity> {
     const pet = await this.petRepository.findOne({
       where: { id },
-      relations: ['user', 'species', 'breed'],
     });
 
     if (!pet) {
@@ -44,11 +55,10 @@ export class PetService {
   async findByUserId(userId: number): Promise<PetEntity[]> {
     return this.petRepository.find({
       where: { userId: userId },
-      relations: ['species', 'breed'],
     });
   }
 
-  async create(
+  async createPet(
     createPetDto: CreatePetDto,
     user: IAdminPayload,
   ): Promise<PetEntity> {
@@ -86,10 +96,8 @@ export class PetService {
     return this.petRepository.save(pet);
   }
 
-  async update(id: number, updatePetDto: UpdatePetDto): Promise<PetEntity> {
-    const pet = await this.findOne(id);
-    Object.assign(pet, updatePetDto);
-    return this.petRepository.save(pet);
+  async updatePet(id: number, updatePetDto: UpdatePetDto): Promise<any> {
+    return this.update(id, updatePetDto);
   }
 
   async remove(id: number): Promise<void> {

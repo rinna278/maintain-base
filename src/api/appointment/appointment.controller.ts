@@ -10,6 +10,7 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { AppointmentService } from './appointment.service';
@@ -30,6 +31,7 @@ import { PermissionGuard } from '../permission/permission.guard';
 import { PERMISSIONS } from '../permission/permission.constant';
 import { ConfirmAppointmentDto } from './dto/confirm-appointment.dto';
 import { APPOINTMENT_SWAGGER_RESPONSE } from './appointment.constant';
+import { QueryParamDto } from '../user/dto/query-param.dto';
 
 @Controller({
   version: [API_CONFIG.VERSION_V1],
@@ -48,7 +50,7 @@ export class AppointmentController {
   @HttpCode(HttpStatus.CREATED)
   @Post()
   create(@Body() dto: CreateAppointmentDto, @GetUser() user: IAdminPayload) {
-    return this.appointmentService.create(dto, user);
+    return this.appointmentService.createAppointment(dto, user);
   }
 
   @ApiOkResponse(APPOINTMENT_SWAGGER_RESPONSE.GET_LIST_SUCCESS)
@@ -56,8 +58,8 @@ export class AppointmentController {
   @Get()
   @PermissionMetadata(PERMISSIONS.APP_GET_ALL)
   @UseGuards(PermissionGuard)
-  findAll() {
-    return this.appointmentService.findAll();
+  findAll(@Query() query: QueryParamDto) {
+    return this.appointmentService.findAll(query);
   }
 
   @Get('my-appointments')
@@ -67,6 +69,13 @@ export class AppointmentController {
     return this.appointmentService.getMyAppointments(user);
   }
 
+  @Patch('cancel/:id')
+  async cancelAppointment(
+    @Param('id') id: number,
+    @GetUser() user: IAdminPayload,
+  ) {
+    return this.appointmentService.cancelAppointment(id, user);
+  }
   @Patch('confirm/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @PermissionMetadata(PERMISSIONS.APP_CONFIRM)

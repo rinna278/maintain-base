@@ -1,4 +1,4 @@
-import { swaggerSchemaExample } from 'src/share/utils/swagger_schema';
+import { swaggerSchemaExample } from '../../share/utils/swagger_schema';
 
 export enum DoctorRequestStatus {
   PENDING = '1',

@@ -1,20 +1,24 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { BreedEntity } from './breed.entity';
 import { CreateBreedDto } from './dto/create-breed.dto';
 import { UpdateBreedDto } from './dto/update-breed.dto';
-import { IAdminPayload } from 'src/share/common/app.interface';
+import { IAdminPayload, IPaginateParams } from 'src/share/common/app.interface';
 import { ERROR_BREED } from './breed.constant';
+import { BaseService } from 'src/share/database/base.service';
+import { StringUtil } from 'src/share/utils/string.util';
 
 @Injectable()
-export class BreedService {
+export class BreedService extends BaseService<BreedEntity> {
   constructor(
     @InjectRepository(BreedEntity)
     private readonly repo: Repository<BreedEntity>,
-  ) {}
+  ) {
+    super(repo);
+  }
 
-  async create(dto: CreateBreedDto, user: IAdminPayload) {
+  async createBreed(dto: CreateBreedDto, user: IAdminPayload) {
     const existing = await this.repo.findOneBy({ name: dto.name });
     if (existing) {
       throw new BadRequestException(ERROR_BREED.BREED_ALREADY_EXIST.MESSAGE);
@@ -28,22 +32,29 @@ export class BreedService {
     return await this.repo.save(entity);
   }
 
-  findAll() {
-    return this.repo.find();
+  findAll(params: IPaginateParams) {
+    const conditions: any = {};
+    if (params.search) {
+      conditions.name = Like(
+        `%${StringUtil.mysqlRealEscapeString(params.search)}%`,
+      );
+    }
+    if (params.status) {
+      conditions.status = Number(params.status);
+    }
+
+    return this.getPagination(conditions, params);
   }
 
   findOne(id: number) {
-    return this.repo.findOneBy({ id });
+    return this.get(id);
   }
 
-  update(id: number, dto: UpdateBreedDto) {
-    return this.repo.update(id, {
-      ...dto,
-      speciesId: dto.speciesId ? +dto.speciesId : undefined,
-    });
+  updateBreed(id: number, dto: UpdateBreedDto) {
+    return this.update(id, dto);
   }
 
-  remove(id: number) {
-    return this.repo.delete(id);
+  deleteBreed(id: number) {
+    return this.delete(id);
   }
 }

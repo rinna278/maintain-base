@@ -1,4 +1,4 @@
-import { swaggerSchemaExample } from 'src/share/utils/swagger_schema';
+import { swaggerSchemaExample } from '../../share/utils/swagger_schema';
 
 export const BREED_CONST = {
   MODEL_NAME: 'breed',
@@ -18,12 +18,18 @@ export const ERROR_BREED = {
 export const BREED_SWAGGER_RESPONSE = {
   CREATE_SUCCESS: swaggerSchemaExample(
     {
-      id: 1,
-      name: 'Golden Retriever',
-      speciesId: 1,
-      createdBy: 1,
-      createdAt: '2025-05-27T11:49:03.604Z',
-      updatedAt: '2025-05-27T11:49:03.604Z',
+      data: [
+        {
+          id: 1,
+          name: 'Pitbull',
+          createdBy: 1,
+          speciesId: 1,
+        },
+      ],
+      page: 1,
+      pageSize: 20,
+      totalPage: 1,
+      totalItem: 1,
     },
     'Create breed successfully',
   ),
@@ -34,8 +40,6 @@ export const BREED_SWAGGER_RESPONSE = {
         name: 'Golden Retriever',
         speciesId: 1,
         createdBy: 1,
-        createdAt: '2025-05-27T11:49:03.604Z',
-        updatedAt: '2025-05-27T11:49:03.604Z',
       },
     ],
     'Get all breeds successfully',
@@ -47,8 +51,6 @@ export const BREED_SWAGGER_RESPONSE = {
         name: 'Golden Retriever',
         speciesId: 1,
         createdBy: 1,
-        createdAt: '2025-05-27T11:49:03.604Z',
-        updatedAt: '2025-05-27T11:49:03.604Z',
       },
     ],
     'Get the breed successfully',

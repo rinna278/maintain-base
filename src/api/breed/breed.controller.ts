@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { CreateBreedDto } from './dto/create-breed.dto';
 import { UpdateBreedDto } from './dto/update-breed.dto';
@@ -31,6 +32,7 @@ import { BREED_SWAGGER_RESPONSE } from './breed.constant';
 import { PermissionGuard } from '../permission/permission.guard';
 import { PermissionMetadata } from '../permission/permission.decorator';
 import { PERMISSIONS } from '../permission/permission.constant';
+import { QueryParamDto } from '../user/dto/query-param.dto';
 
 @Controller({
   version: [API_CONFIG.VERSION_V1],
@@ -51,20 +53,20 @@ export class BreedController {
   @HttpCode(HttpStatus.CREATED)
   @Post()
   create(@Body() dto: CreateBreedDto, @GetUser() user: IAdminPayload) {
-    return this.breedService.create(dto, user);
+    return this.breedService.createBreed(dto, user);
   }
 
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse(BREED_SWAGGER_RESPONSE.GET_SUCCESS)
   @Get()
-  findAll() {
-    return this.breedService.findAll();
+  findAll(@Query() query: QueryParamDto) {
+    return this.breedService.findAll(query);
   }
 
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse(BREED_SWAGGER_RESPONSE.GET_ONE_SUCCESS)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.breedService.findOne(+id);
   }
 
@@ -73,8 +75,8 @@ export class BreedController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOkResponse(BREED_SWAGGER_RESPONSE.UPDATE_SUCCESS)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateBreedDto) {
-    return this.breedService.update(+id, dto);
+  update(@Param('id') id: number, @Body() dto: UpdateBreedDto) {
+    return this.breedService.updateBreed(id, dto);
   }
 
   @UseGuards(PermissionGuard)
@@ -82,7 +84,7 @@ export class BreedController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOkResponse(BREED_SWAGGER_RESPONSE.DELETE_SUCCESS)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.breedService.remove(+id);
+  delete(@Param('id') id: number) {
+    return this.breedService.deleteBreed(+id);
   }
 }

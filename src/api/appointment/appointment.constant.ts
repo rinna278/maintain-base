@@ -1,4 +1,4 @@
-import { swaggerSchemaExample } from 'src/share/utils/swagger_schema';
+import { swaggerSchemaExample } from '../../share/utils/swagger_schema';
 
 export const APPOINTMENT_CONST = {
   MODEL_NAME: 'appointment',
@@ -47,6 +47,10 @@ export const ERROR_APPOINTMENT = {
   APPOINTMENT_PET_NOT_OWN: {
     CODE: 'AP009',
     MESSAGE: 'You do not own this pet',
+  },
+  APPOINTMENT_CANNOT_CANCEL: {
+    CODE: 'AP010',
+    MESSAGE: 'Just pending appointment can be cancelled',
   },
 };
 
